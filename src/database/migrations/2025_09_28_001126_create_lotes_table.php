@@ -17,7 +17,7 @@ return new class extends Migration
             $table->integer('num_loteamento');
             $table->integer('num_lote');
             $table->integer('num_quadra');
-            $table->decimal('area_lote', 12, 2);
+            $table->decimal('area_lote', 12, 2)->nullable();
             $table->timestamps();
 
             $table->unique(['num_loteamento', 'num_quadra', 'num_lote'], 'lotes_uk_localizacao');

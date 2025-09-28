@@ -15,4 +15,11 @@ class Lote extends Model
         'num_quadra',
         'area_lote'
     ];
+
+    protected $casts = [
+        'num_loteamento' => 'integer',
+        'num_lote' => 'integer',
+        'num_quadra' => 'integer',
+        'area_lote' => 'decimal:2',
+    ];
 }
