@@ -58,7 +58,7 @@ class LoteRequest extends FormRequest
                                 )
                                 ->ignore($id);
 
-        if ($this->isMethod('put')) {
+        if ($this->isMethod('post') || $this->isMethod('put')) {
             return [
                 'nome' => ['required','string','max:120'],
                 'num_loteamento' => ['required','integer','min:1'],

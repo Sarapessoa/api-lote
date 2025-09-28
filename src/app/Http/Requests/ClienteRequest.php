@@ -48,7 +48,7 @@ class ClienteRequest extends FormRequest
     {
         $id = $this->route('cliente');
 
-        if ($this->isMethod('put')) {
+        if ($this->isMethod('post') || $this->isMethod('put')) {
             return [
                 'nome' => ['required','string','max:150'],
                 'endereco' => ['nullable','string'],
