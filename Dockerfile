@@ -30,5 +30,5 @@ COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
 
 COPY docker/supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-EXPOSE 8080
+EXPOSE 80
 CMD ["supervisord","-n","-c","/etc/supervisor/conf.d/supervisord.conf"]
