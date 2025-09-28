@@ -7,6 +7,8 @@ RUN apt-get update && apt-get install -y \
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
+RUN rm -f /etc/nginx/sites-enabled/default
+
 COPY docker/php/php.ini /usr/local/etc/php/conf.d/php-custom.ini
 RUN { \
     echo "opcache.enable=1"; \
@@ -18,16 +20,13 @@ RUN { \
 } > /usr/local/etc/php/conf.d/opcache.ini
 
 WORKDIR /var/www/html
-
 COPY src/ /var/www/html/
 
 RUN composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader --classmap-authoritative \
-    && php artisan config:cache \
     && php artisan route:cache \
     && php artisan view:cache
 
 COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
-
 COPY docker/supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 EXPOSE 80
