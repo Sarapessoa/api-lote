@@ -63,8 +63,9 @@ class LoteRequest extends FormRequest
                 'nome' => ['required','string','max:120'],
                 'num_loteamento' => ['required','integer','min:1'],
                 'num_quadra' => ['required','integer','min:1'],
+                'cliente_id' => ['sometimes','nullable','exists:clientes,id'],
                 'num_lote' => ['required','integer','min:1',$uniqueLocalizacao],
-                'area_lote' => ['sometimes','numeric','decimal:0,2','gt:0']
+                'area_lote' => ['sometimes','nullable','numeric','decimal:0,2','gt:0']
             ];
         }
 
@@ -73,7 +74,8 @@ class LoteRequest extends FormRequest
             'num_loteamento' => ['sometimes','required','integer','min:1'],
             'num_quadra' => ['sometimes','required','integer','min:1'],
             'num_lote' => ['sometimes','required','integer','min:1',$uniqueLocalizacao],
-            'area_lote' => ['sometimes','required','numeric','decimal:0,2','gt:0']
+            'cliente_id' => ['sometimes','nullable','exists:clientes,id'],
+            'area_lote' => ['sometimes','nullable','numeric','decimal:0,2','gt:0']
         ];
     }
 

@@ -19,4 +19,9 @@ class Cliente extends Model
         'responsavel_nome',
         'responsavel_cpf'
     ];
+
+    public function lotes()
+    {
+        return $this->hasMany(Lote::class);
+    }
 }

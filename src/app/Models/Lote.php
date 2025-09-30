@@ -13,7 +13,8 @@ class Lote extends Model
         'num_loteamento',
         'num_lote',
         'num_quadra',
-        'area_lote'
+        'area_lote',
+        'cliente_id'
     ];
 
     protected $casts = [
@@ -22,4 +23,9 @@ class Lote extends Model
         'num_quadra' => 'integer',
         'area_lote' => 'decimal:2',
     ];
+
+    public function cliente()
+    {
+        return $this->belongsTo(Cliente::class);
+    }
 }
