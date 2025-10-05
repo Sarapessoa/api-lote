@@ -21,7 +21,7 @@ class ClienteIndexRequest extends FormRequest
         $unknown = array_diff(array_keys($data), $allowed);
 
         if (!empty($unknown)) {
-            $this->merge(['__unknown_params' => implode(',', $unknown)]);
+            $this->merge(['unknown_params' => implode(', ', $unknown)]);
         }
 
         if (!empty($data['tipo_pessoa'])) $data['tipo_pessoa'] = strtoupper((string)$data['tipo_pessoa']);
@@ -43,14 +43,14 @@ class ClienteIndexRequest extends FormRequest
             'dir' => 'sometimes|in:asc,desc',
             'per_page' => 'sometimes|integer|min:1|max:100',
             'page' => 'sometimes|integer|min:1',
-            '__unknown_params' => 'prohibited'
+            'unknown_params' => 'prohibited'
         ];
     }
 
     public function messages(): array
     {
         return [
-            '__unknown_params.prohibited' => 'Parâmetros desconhecidos: :input',
+            'unknown_params.prohibited' => 'Parâmetros desconhecidos: :input',
             'tipo_pessoa.in' => 'Tipo de pessoa inválido (use FISICA ou JURIDICA).',
             'cpf.regex' => 'O CPF deve conter 11 dígitos numéricos.',
             'cnpj.regex' => 'O CNPJ deve conter 14 dígitos numéricos.',
