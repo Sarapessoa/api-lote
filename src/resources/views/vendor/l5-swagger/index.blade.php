@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ $documentationTitle }}</title>
-    <link rel="stylesheet" href="{{ asset(config('l5-swagger.documentations.default.paths.swagger_ui_assets_path') . 'swagger-ui.css') }}">
+    <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist/swagger-ui.css">
     <link rel="icon" type="image/png" href="{{ asset(config('l5-swagger.documentations.default.paths.swagger_ui_assets_path') . 'favicon-32x32.png') }}" sizes="32x32"/>
     <link rel="icon" type="image/png" href="{{ asset(config('l5-swagger.documentations.default.paths.swagger_ui_assets_path') . 'favicon-16x16.png') }}" sizes="16x16"/>
     <style>
@@ -120,8 +120,8 @@
 <body @if(config('l5-swagger.defaults.ui.display.dark_mode')) id="dark-mode" @endif>
 <div id="swagger-ui"></div>
 
-<script src="{{ asset(config('l5-swagger.documentations.default.paths.swagger_ui_assets_path') . 'swagger-ui-bundle.js') }}"></script>
-<script src="{{ asset(config('l5-swagger.documentations.default.paths.swagger_ui_assets_path') . 'swagger-ui-standalone-preset.js') }}"></script>
+<script src="https://unpkg.com/swagger-ui-dist/swagger-ui-bundle.js"></script>
+<script src="https://unpkg.com/swagger-ui-dist/swagger-ui-standalone-preset.js"></script>
 <script>
     @php
         $specUrl = route(
