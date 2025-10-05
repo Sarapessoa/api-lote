@@ -94,6 +94,7 @@ Ela permite o cadastro e a gestão de **Clientes** e **Lotes**, seguindo o padr�
     "num_loteamento": 100,
     "num_lote": 5,
     "num_quadra": 2,
+    "cliente_id": null,
     "area_lote": 250.75,
     "created_at": "2025-09-28 20:25:46",
     "updated_at": "2025-09-28 20:25:46",
@@ -125,7 +126,6 @@ Exemplo de resposta de erro:
 
 ```json
 {
-  "status": "erro",
   "message": "Erro de validação",
   "errors": {
     "cpf": ["O CPF é obrigatório para pessoa física."]
