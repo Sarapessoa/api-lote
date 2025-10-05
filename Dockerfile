@@ -26,7 +26,7 @@ RUN composer install --no-dev --prefer-dist --no-interaction --optimize-autoload
     && php artisan route:cache \
     && php artisan view:cache
 
-COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY docker/nginx/default.prod.conf /etc/nginx/conf.d/default.conf
 COPY docker/supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 EXPOSE 80

@@ -137,7 +137,6 @@ class ClienteRequest extends FormRequest
         elseif (isset($errors['nome'])) $status = 400;
 
         throw new HttpResponseException(response()->json([
-            'status' => 'erro',
             'message' => 'Erro de validação',
             'errors' => $errors
         ], $status));

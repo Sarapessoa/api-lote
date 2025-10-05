@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cliente;
 use App\Http\Requests\ClienteRequest;
+use App\Http\Requests\ClienteIndexRequest;
 use App\Http\Resources\ClienteResource;
 
 use App\Support\ApiExceptionHandler;
@@ -15,22 +16,22 @@ class ClienteController extends Controller
 {
     use ApiExceptionHandler;
 
-    public function index(Request $request)
+    public function index(ClienteIndexRequest $request)
     {
+
+        $v = $request->validated();
+
         $q = Cliente::query();
 
-        if ($request->filled('nome')) $q->where('nome', 'ilike', '%'.$request->get('nome').'%');
-        if ($request->filled('tipo_pessoa')) $q->where('tipo_pessoa', $request->get('tipo_pessoa'));
-        if ($request->filled('cpf')) $q->where('cpf', $request->get('cpf'));
-        if ($request->filled('cnpj')) $q->where('cnpj', $request->get('cnpj'));
-        if ($request->filled('email')) $q->where('email', 'ilike', '%'.$request->get('email').'%');
+        if ($request->filled('nome')) $q->where('nome', 'ilike', '%'.$v('nome').'%');
+        if ($request->filled('tipo_pessoa')) $q->where('tipo_pessoa', $v('tipo_pessoa'));
+        if ($request->filled('cpf')) $q->where('cpf', $v('cpf'));
+        if ($request->filled('cnpj')) $q->where('cnpj', $v('cnpj'));
+        if ($request->filled('email')) $q->where('email', 'ilike', '%'.$v('email').'%');
 
-        $sort = $request->get('sort', 'nome');
-        $dir = $request->get('dir', 'asc');
-        if (!in_array($sort, ['nome','tipo_pessoa','created_at'])) $sort = 'nome';
-        if (!in_array($dir, ['asc','desc'])) $dir = 'asc';
-
-        $perPage = (int) $request->get('per_page', 15);
+        $sort = $v['sort'] ?? 'nome';
+        $dir = $v['dir'] ?? 'asc';
+        $perPage = (int)($v['per_page'] ?? 15);
 
         $clientes = $q->orderBy($sort, $dir)->paginate($perPage);
 
@@ -65,7 +66,6 @@ class ClienteController extends Controller
             DB::commit();
 
             return response()->json([
-                'status' => 'sucesso',
                 'message' => 'Cliente atualizado',
                 'data' => new ClienteResource($cliente)
             ], 200);            
@@ -82,7 +82,6 @@ class ClienteController extends Controller
             $cliente->delete();
             DB::commit();
             return response()->json([
-                'status' => 'sucesso',
                 'message' => 'Cliente excluído com sucesso'
             ], 200);
         } catch (Throwable $e) {

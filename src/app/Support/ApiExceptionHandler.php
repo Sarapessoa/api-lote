@@ -15,7 +15,6 @@ trait ApiExceptionHandler
     {
         if ($e instanceof ValidationException) {
             return response()->json([
-                'status' => 'erro',
                 'message' => 'Erro de validação',
                 'errors' => $e->errors()
             ], 422);
@@ -23,7 +22,6 @@ trait ApiExceptionHandler
 
         if ($e instanceof ModelNotFoundException || $e instanceof NotFoundHttpException) {
             return response()->json([
-                'status' => 'erro',
                 'message' => 'Recurso não encontrado'
             ], 404);
         }
@@ -71,7 +69,6 @@ trait ApiExceptionHandler
 
         if (config('app.debug')) {
             return response()->json([
-                'status' => 'erro',
                 'message' => $message,
                 'exception' => class_basename($e),
                 'error' => $e->getMessage()
@@ -79,7 +76,6 @@ trait ApiExceptionHandler
         }
 
         return response()->json([
-            'status' => 'erro',
             'message' => $message
         ], $status);
     }
@@ -117,7 +113,7 @@ trait ApiExceptionHandler
 
     private function jsonDb(string $status, string $message, int $code, ?string $sqlState, ?string $driverCode, ?string $driverMsg)
     {
-        $payload = ['status' => $status, 'message' => $message];
+        $payload = ['message' => $message];
 
         if (config('app.debug')) {
             $payload['db'] = [

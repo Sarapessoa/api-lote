@@ -115,7 +115,6 @@ class LoteRequest extends FormRequest
         }
 
         throw new HttpResponseException(response()->json([
-            'status' => 'erro',
             'message' => 'Erro de validação',
             'errors' => $errors
         ], $status));

@@ -64,7 +64,6 @@ class LoteController extends Controller
             $lote->update($request->validated());
             DB::commit();
             return response()->json([
-                'status' => 'sucesso',
                 'message' => 'Lote atualizado',
                 'data' => new LoteResource($lote)
             ], 200);
@@ -81,7 +80,6 @@ class LoteController extends Controller
             $lote->delete();
             DB::commit();
             return response()->json([
-                'status' => 'sucesso',
                 'message' => 'Lote excluído com sucesso'
             ], 200);
         } catch (Throwable $e) {
