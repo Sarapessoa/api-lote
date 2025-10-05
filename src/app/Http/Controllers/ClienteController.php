@@ -23,11 +23,11 @@ class ClienteController extends Controller
 
         $q = Cliente::query();
 
-        if ($request->filled('nome')) $q->where('nome', 'ilike', '%'.$v('nome').'%');
-        if ($request->filled('tipo_pessoa')) $q->where('tipo_pessoa', $v('tipo_pessoa'));
-        if ($request->filled('cpf')) $q->where('cpf', $v('cpf'));
-        if ($request->filled('cnpj')) $q->where('cnpj', $v('cnpj'));
-        if ($request->filled('email')) $q->where('email', 'ilike', '%'.$v('email').'%');
+        if ($request->filled('nome')) $q->where('nome', 'ilike', '%'.$v['nome'].'%');
+        if ($request->filled('tipo_pessoa')) $q->where('tipo_pessoa', $v['tipo_pessoa']);
+        if ($request->filled('cpf')) $q->where('cpf', $v['cpf']);
+        if ($request->filled('cnpj')) $q->where('cnpj', $v['cnpj']);
+        if ($request->filled('email')) $q->where('email', 'ilike', '%'.$v['email'].'%');
 
         $sort = $v['sort'] ?? 'nome';
         $dir = $v['dir'] ?? 'asc';

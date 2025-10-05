@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Lote;
 use App\Http\Requests\LoteRequest;
+use App\Http\Requests\LoteIndexRequest;
 use App\Http\Resources\LoteResource;
+
 use App\Support\ApiExceptionHandler;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -14,25 +16,24 @@ class LoteController extends Controller
 {
     use ApiExceptionHandler;
 
-    public function index(Request $request)
+    public function index(LoteIndexRequest $request)
     {
+
+        $v = $request->validated();
+
         $q = Lote::query();
 
-        if ($request->filled('nome')) $q->where('nome', 'ilike', '%'.$request->get('nome').'%');
-        if ($request->filled('num_loteamento')) $q->where('num_loteamento', (int)$request->get('num_loteamento'));
-        if ($request->filled('num_quadra')) $q->where('num_quadra', (int)$request->get('num_quadra'));
-        if ($request->filled('num_lote')) $q->where('num_lote', (int)$request->get('num_lote'));
+        if ($request->filled('nome')) $q->where('nome', 'ilike', '%'.$v['nome'].'%');
+        if ($request->filled('num_loteamento')) $q->where('num_loteamento', (int)$v['num_loteamento']);
+        if ($request->filled('num_quadra')) $q->where('num_quadra', (int)$v['num_quadra']);
+        if ($request->filled('num_lote')) $q->where('num_lote', (int)$v['num_lote']);
 
-        if ($request->filled('area_min')) $q->where('area_lote', '>=', (float)str_replace(',', '.', $request->get('area_min')));
-        if ($request->filled('area_max')) $q->where('area_lote', '<=', (float)str_replace(',', '.', $request->get('area_max')));
+        if ($request->filled('area_min')) $q->where('area_lote', '>=', (float)str_replace(',', '.', $v['area_min']));
+        if ($request->filled('area_max')) $q->where('area_lote', '<=', (float)str_replace(',', '.', $v['area_max']));
 
-        $sort = $request->get('sort', 'nome');
-        $dir = $request->get('dir', 'asc');
-        $allowedSort = ['nome','num_loteamento','num_quadra','num_lote','area_lote','created_at'];
-        if (!in_array($sort, $allowedSort)) $sort = 'nome';
-        if (!in_array($dir, ['asc','desc'])) $dir = 'asc';
-
-        $perPage = (int)$request->get('per_page', 15);
+        $sort = $v['sort'] ?? 'nome';
+        $dir = $v['dir'] ?? 'asc';
+        $perPage = (int)($v['per_page'] ?? 15);
 
         $lotes = $q->orderBy($sort, $dir)->paginate($perPage);
 

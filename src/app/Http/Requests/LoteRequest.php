@@ -9,9 +9,6 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 
 class LoteRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return true;
@@ -19,69 +16,79 @@ class LoteRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
+        $input = $this->all();
+
+        $allowed = ['nome','num_loteamento','num_quadra','num_lote','cliente_id','area_lote'];
+        $unknown = array_diff(array_keys($input), $allowed);
+        if (!empty($unknown)) {
+            $this->merge(['unknown_fields' => implode(', ', $unknown)]);
+        }
+
         $data = [];
 
-        if ($this->has('num_loteamento')) {
-            $data['num_loteamento'] = is_numeric($this->input('num_loteamento')) ? (int)$this->input('num_loteamento') : $this->input('num_loteamento');
+        if ($this->has('nome')) $data['nome'] = is_string($this->input('nome')) ? trim((string)$this->input('nome')) : $this->input('nome');
+
+        foreach (['num_loteamento','num_quadra','num_lote'] as $f) {
+            if ($this->has($f)) {
+                $v = $this->input($f);
+                $data[$f] = is_numeric($v) ? (int)$v : $v;
+            }
         }
-        if ($this->has('num_quadra')) {
-            $data['num_quadra'] = is_numeric($this->input('num_quadra')) ? (int)$this->input('num_quadra') : $this->input('num_quadra');
-        }
-        if ($this->has('num_lote')) {
-            $data['num_lote'] = is_numeric($this->input('num_lote')) ? (int)$this->input('num_lote') : $this->input('num_lote');
-        }
+
         if ($this->has('area_lote')) {
             $raw = (string)$this->input('area_lote');
             $norm = str_replace(',', '.', $raw);
             $data['area_lote'] = is_numeric($norm) ? (float)$norm : $this->input('area_lote');
         }
 
-        if (!empty($data)) {
-            $this->merge($data);
-        }
+        if (!empty($data)) $this->merge($data);
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
-        $id = $this->route('lote');
+        $routeParam = $this->route('lote');
+        $id = is_object($routeParam) ? ($routeParam->id ?? null) : $routeParam;
+
+        $current = is_object($routeParam) ? $routeParam : null;
+        $numLoteamento = $this->has('num_loteamento') ? $this->input('num_loteamento') : ($current->num_loteamento ?? null);
+        $numQuadra = $this->has('num_quadra') ? $this->input('num_quadra') : ($current->num_quadra ?? null);
+        $numLote = $this->has('num_lote') ? $this->input('num_lote') : ($current->num_lote ?? null);
 
         $uniqueLocalizacao = Rule::unique('lotes')
-                                ->where(fn($q) => $q
-                                    ->where('num_loteamento', $this->input('num_loteamento'))
-                                    ->where('num_quadra', $this->input('num_quadra'))
-                                    ->where('num_lote', $this->input('num_lote'))
-                                )
-                                ->ignore($id);
+            ->where(fn($q) => $q
+                ->where('num_loteamento', $numLoteamento)
+                ->where('num_quadra', $numQuadra)
+                ->where('num_lote', $numLote)
+            )
+            ->ignore($id);
 
         if ($this->isMethod('post') || $this->isMethod('put')) {
             return [
-                'nome' => ['required','string','max:120'],
-                'num_loteamento' => ['required','integer','min:1'],
-                'num_quadra' => ['required','integer','min:1'],
-                'cliente_id' => ['sometimes','nullable','exists:clientes,id'],
-                'num_lote' => ['required','integer','min:1',$uniqueLocalizacao],
-                'area_lote' => ['sometimes','nullable','numeric','decimal:0,2','gt:0']
+                'nome' => ['bail','required','string','max:120'],
+                'num_loteamento' => ['bail','required','integer','min:1'],
+                'num_quadra' => ['bail','required','integer','min:1'],
+                'num_lote' => ['bail','required','integer','min:1',$uniqueLocalizacao],
+                'cliente_id' => ['bail','sometimes','nullable','exists:clientes,id'],
+                'area_lote' => ['bail','sometimes','nullable','numeric','decimal:0,2','gt:0'],
+                'unknown_fields' => 'prohibited'
             ];
         }
 
         return [
-            'nome' => ['sometimes','required','string','max:120'],
-            'num_loteamento' => ['sometimes','required','integer','min:1'],
-            'num_quadra' => ['sometimes','required','integer','min:1'],
-            'num_lote' => ['sometimes','required','integer','min:1',$uniqueLocalizacao],
-            'cliente_id' => ['sometimes','nullable','exists:clientes,id'],
-            'area_lote' => ['sometimes','nullable','numeric','decimal:0,2','gt:0']
+            'nome' => ['bail','sometimes','required','string','max:120'],
+            'num_loteamento' => ['bail','sometimes','required','integer','min:1'],
+            'num_quadra' => ['bail','sometimes','required','integer','min:1'],
+            'num_lote' => ['bail','sometimes','required','integer','min:1',$uniqueLocalizacao],
+            'cliente_id' => ['bail','sometimes','nullable','exists:clientes,id'],
+            'area_lote' => ['bail','sometimes','nullable','numeric','decimal:0,2','gt:0'],
+            'unknown_fields' => 'prohibited'
         ];
     }
 
     public function messages(): array
     {
         return [
+            'unknown_fields' => 'Campos não permitidos: :input',
             'nome.required' => 'O nome do lote é obrigatório.',
             'nome.max' => 'O nome do lote deve ter no máximo 120 caracteres.',
             'num_loteamento.required' => 'O número do loteamento é obrigatório.',
@@ -94,7 +101,7 @@ class LoteRequest extends FormRequest
             'num_lote.integer' => 'O número do lote deve ser um inteiro.',
             'num_lote.min' => 'O número do lote deve ser maior ou igual a 1.',
             'num_lote.unique' => 'Já existe um lote com essa localização (loteamento, quadra e lote).',
-            'area_lote.required' => 'A área do lote é obrigatória.',
+            'cliente_id.exists' => 'Cliente informado não existe.',
             'area_lote.numeric' => 'A área do lote deve ser numérica.',
             'area_lote.decimal' => 'A área do lote deve ter no máximo duas casas decimais.',
             'area_lote.gt' => 'A área do lote deve ser maior que zero.'
@@ -104,13 +111,16 @@ class LoteRequest extends FormRequest
     protected function failedValidation(Validator $validator)
     {
         $errors = $validator->errors()->toArray();
+        $failed = $validator->failed();
+
         $status = 422;
 
-        if (isset($errors['num_lote']) && in_array('Já existe um lote com essa localização (loteamento, quadra e lote).', $errors['num_lote'])) {
+        $localizacaoUnique = isset($failed['num_lote']['Unique']);
+        if ($localizacaoUnique) {
             $status = 409;
-        } elseif (isset($errors['area_lote']) || isset($errors['num_loteamento']) || isset($errors['num_quadra']) || isset($errors['num_lote'])) {
+        } elseif (isset($errors['unknown_fields'])) {
             $status = 400;
-        } elseif (isset($errors['nome'])) {
+        } elseif (isset($errors['nome']) || isset($errors['num_loteamento']) || isset($errors['num_quadra']) || isset($errors['num_lote']) || isset($errors['area_lote']) || isset($errors['cliente_id'])) {
             $status = 400;
         }
 
