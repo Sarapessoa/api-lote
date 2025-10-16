@@ -98,7 +98,7 @@ class UsuarioController extends Controller
      *   tags={"Usuarios"},
      *   summary="Atualizar usuario (total)",
      *   @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
-     *   @OA\RequestBody(required=true, @OA.JsonContent(ref="#/components/schemas/UsuarioUpdate")),
+     *   @OA\RequestBody(required=true, @OA\JsonContent(ref="#/components/schemas/UsuarioUpdate")),
      *   @OA\Response(response=200, description="Atualizado", @OA\JsonContent(ref="#/components/schemas/Usuario")),
      *   @OA\Response(response=400, description="Campos mal formatados", @OA\JsonContent(ref="#/components/schemas/ErrorResponse")),
      *   @OA\Response(response=404, description="Não encontrado", @OA\JsonContent(ref="#/components/schemas/ErrorResponse")),

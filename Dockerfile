@@ -31,7 +31,8 @@ RUN mkdir -p public/vendor/swagger-api/swagger-ui/dist \
     && cp -R vendor/swagger-api/swagger-ui/dist/* public/vendor/swagger-api/swagger-ui/dist/
 
 RUN chown -R www-data:www-data storage bootstrap/cache \
-    && chmod -R 775 storage bootstrap/cache
+    && chmod -R 775 storage bootstrap/cache \
+    && php artisan l5-swagger:generate
 
 COPY docker/nginx/default.prod.conf /etc/nginx/conf.d/default.conf
 COPY docker/supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
