@@ -17,14 +17,14 @@ class LoteIndexRequest extends FormRequest
     {
         $data = $this->query();
 
-        $allowed = ['nome','num_loteamento','num_quadra','num_lote','cliente_id','area_lote','sort','dir','per_page','page'];
+        $allowed = ['nome','num_loteamento','num_quadra','num_lote','area_lote','sort','dir','per_page','page'];
         $unknown = array_diff(array_keys($data), $allowed);
         if (!empty($unknown)) {
             $this->merge(['unknown_params' => implode(', ', $unknown)]);
         }
 
         if (isset($data['nome']) && is_string($data['nome'])) $data['nome'] = trim($data['nome']);
-        foreach (['num_loteamento','num_quadra','num_lote','cliente_id'] as $f) {
+        foreach (['num_loteamento','num_quadra','num_lote'] as $f) {
             if (isset($data[$f])) {
                 $v = $data[$f];
                 $data[$f] = is_numeric($v) ? (int)$v : $v;
@@ -46,7 +46,6 @@ class LoteIndexRequest extends FormRequest
             'num_loteamento' => 'sometimes|integer|min:1',
             'num_quadra' => 'sometimes|integer|min:1',
             'num_lote' => 'sometimes|integer|min:1',
-            'cliente_id' => 'sometimes|integer|min:1',
             'area_lote' => 'sometimes|numeric|decimal:0,2|min:0',
             'sort' => 'sometimes|in:nome,num_loteamento,num_quadra,num_lote,area_lote,created_at',
             'dir' => 'sometimes|in:asc,desc',
@@ -68,8 +67,6 @@ class LoteIndexRequest extends FormRequest
             'num_quadra.min' => 'O número da quadra deve ser maior ou igual a 1.',
             'num_lote.integer' => 'O número do lote deve ser um inteiro.',
             'num_lote.min' => 'O número do lote deve ser maior ou igual a 1.',
-            'cliente_id.integer' => 'O cliente deve ser um inteiro.',
-            'cliente_id.min' => 'O cliente deve ser maior ou igual a 1.',
             'area_lote.numeric' => 'A área do lote deve ser numérica.',
             'area_lote.decimal' => 'A área do lote deve ter no máximo duas casas decimais.',
             'area_lote.min' => 'A área do lote não pode ser negativa.',

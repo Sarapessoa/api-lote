@@ -14,6 +14,57 @@ Ela permite o cadastro e a gestão de **Clientes** e **Lotes**, seguindo o padr�
 
 ## Rotas Disponíveis
 
+### Autenticação
+
+| Método | Rota                 | Descrição                    |
+| ------ | -------------------- | ---------------------------- |
+| POST   | `/api/auth/login`    | Autentica um usuário         |
+| POST   | `/api/auth/logout`   | Revoga o token atual         |
+| POST   | `/api/auth/refresh`  | Gera um novo access_token    |
+
+#### Exemplo `POST /api/auth/login`
+
+```json
+{
+  "username": "admin",
+  "password": "admin"
+}
+```
+
+#### Resposta 200
+
+```json
+{
+  "access_token": "eyJ0eXAiOiJKV1QiLCJhbGci...",
+  "token_type": "Bearer",
+  "expires_in": 3600,
+  "refresh_token": "def50200b31a8c7f4b8...",
+  "refresh_expires_in": 43200
+}
+```
+
+#### Exemplo `POST /api/auth/refresh`
+
+```json
+{
+  "refresh_token": "def50200b31a8c7f4b8..."
+}
+```
+
+#### Resposta 200
+
+```json
+{
+  "access_token": "eyJ0eXAiOiJKV1QiLCJhbGci...",
+  "token_type": "Bearer",
+  "expires_in": 3600,
+  "refresh_token": "newrefresh123...",
+  "refresh_expires_in": 43200
+}
+```
+
+---
+
 ### Clientes
 
 | Método | Rota                 | Descrição                    |
@@ -94,7 +145,6 @@ Ela permite o cadastro e a gestão de **Clientes** e **Lotes**, seguindo o padr�
     "num_loteamento": 100,
     "num_lote": 5,
     "num_quadra": 2,
-    "cliente_id": null,
     "area_lote": 250.75,
     "created_at": "2025-09-28 20:25:46",
     "updated_at": "2025-09-28 20:25:46",
@@ -102,6 +152,18 @@ Ela permite o cadastro e a gestão de **Clientes** e **Lotes**, seguindo o padr�
 }
 ```
 
+---
+
+## Autenticação
+
+* Todas as rotas (exceto `/api/auth/login` e `/api/auth/refresh`) exigem header:
+
+```markefile
+Authorization: Bearer <access_token>
+```
+
+* Quando o access_token expira, utilize o refresh_token em `/api/auth/refresh`.
+  
 ---
 
 ## Filtros e Paginação
