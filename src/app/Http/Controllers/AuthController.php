@@ -140,6 +140,11 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         try {
+
+            RefreshToken::where('usuario_id', $user->id)
+                    ->whereNull('revoked_at')
+                    ->update(['revoked_at' => now()]);
+                    
             $request->user()->tokens()->delete();
 
             return response()->json([
